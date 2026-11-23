@@ -14,7 +14,7 @@
       "ru.lastsignal.LastSignalMod"
     ],
     "client": [
-      "ru.lastsignal.client.LastSignalClient"
+      "ru.lastsignal.LastSignalClient"
     ]
   },
   "depends": {

@@ -82,6 +82,8 @@ public final class LastSignalMod implements ModInitializer {
         }
         say(p, "§8[§cПОСЛЕДНИЙ СИГНАЛ§8] §fСигнал бедствия принят. Источник — военный объект «Север-9».");
         say(p, "§7В комплексе обнаружен один живой сотрудник. Найди доктора Орлова.");
+        p.giveItemStack(new ItemStack(LastSignalContent.RIFLE));
+        p.giveItemStack(new ItemStack(net.minecraft.item.Items.ARROW, 32));
         say(p, "§eЦель: поговорить с доктором Орловым.");
         if (FabricLoader.getInstance().isModLoaded("tacz"))
             say(p, "§6TaCZ обнаружен. Для зачистки можешь использовать своё оружие и боеприпасы.");
