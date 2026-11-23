@@ -10,8 +10,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.PillagerEntity;
-import net.minecraft.entity.passive.VillagerEntity;
+import ru.lastsignal.GuardEntity;
+import ru.lastsignal.OrlovEntity;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -69,7 +70,7 @@ public final class LastSignalMod implements ModInitializer {
         setStage(p, 1);
         ServerWorld w = (ServerWorld)p.getWorld();
         build(w, o);
-        VillagerEntity v = EntityType.VILLAGER.create(w);
+        OrlovEntity v = LastSignalContent.ORLOV.create(w);
         if (v != null) {
             v.refreshPositionAndAngles(o.getX()+3.5, o.getY()+1, o.getZ()+.5, 90, 0);
             v.setCustomName(Text.literal("§bДоктор Орлов"));
@@ -120,7 +121,7 @@ public final class LastSignalMod implements ModInitializer {
     }
 
     private ActionResult blockUse(net.minecraft.entity.player.PlayerEntity p, World w, Hand h, BlockHitResult hit) {
-        if (w.isClient || !(p instanceof ServerPlayerEntity s) || !w.getBlockState(hit.getBlockPos()).isOf(Blocks.LODESTONE) || stage(s)==0)
+        if (w.isClient || !(p instanceof ServerPlayerEntity s) || !(w.getBlockState(hit.getBlockPos()).isOf(Blocks.LODESTONE) || w.getBlockState(hit.getBlockPos()).isOf(LastSignalContent.TERMINAL)) || stage(s)==0)
             return ActionResult.PASS;
         BlockPos o=origin(s), b=hit.getBlockPos();
         if (near(b,o.add(9,1,0))) {
@@ -157,7 +158,7 @@ public final class LastSignalMod implements ModInitializer {
         ServerWorld w=(ServerWorld)p.getWorld(); BlockPos o=origin(p);
         int[][] xy={{15,-3},{17,0},{15,3},{23,0}};
         for(int i=0;i<xy.length;i++) {
-            PillagerEntity mob=EntityType.PILLAGER.create(w);
+            GuardEntity mob=LastSignalContent.GUARD.create(w);
             if(mob==null) continue;
             mob.refreshPositionAndAngles(o.getX()+xy[i][0]+.5,o.getY()+1,o.getZ()+xy[i][1]+.5,180,0);
             mob.addCommandTag(ENEMY);
@@ -170,7 +171,7 @@ public final class LastSignalMod implements ModInitializer {
     private void tick(MinecraftServer server) {
         for(ServerPlayerEntity p:server.getPlayerManager().getPlayerList()) if(stage(p)==3) {
             BlockPos o=origin(p); Box area=new Box(o.getX()+12, o.getY(), o.getZ()-5, o.getX()+25, o.getY()+6, o.getZ()+5);
-            long left=p.getWorld().getEntitiesByClass(PillagerEntity.class,area,e->e.getCommandTags().contains(ENEMY)).size();
+            long left=p.getWorld().getEntitiesByClass(GuardEntity.class,area,e->e.getCommandTags().contains(ENEMY)).size();
             if(left==0) {
                 setStage(p,4);
                 say(p,"§aСектор B зачищен. В журнале найден путь к аварийному передатчику.");

@@ -3,16 +3,27 @@
   "id": "lastsignal",
   "version": "${version}",
   "name": "Последний сигнал",
-  "description": "Законченное сюжетное приключение для Minecraft 1.21.1 Fabric.",
-  "authors": ["senyakudr2000-prog"],
+  "description": "Сюжетное приключение для Minecraft 1.21.1 Fabric.",
+  "authors": [
+    "senyakudr2000-prog"
+  ],
   "license": "MIT",
   "environment": "*",
-  "entrypoints": { "main": ["ru.lastsignal.LastSignalMod"] },
+  "entrypoints": {
+    "main": [
+      "ru.lastsignal.LastSignalMod"
+    ],
+    "client": [
+      "ru.lastsignal.client.LastSignalClient"
+    ]
+  },
   "depends": {
     "fabricloader": ">=0.17.2",
     "minecraft": "1.21.1",
     "java": ">=21",
     "fabric-api": "*"
   },
-  "suggests": { "tacz": "*" }
+  "suggests": {
+    "tacz": "*"
+  }
 }
