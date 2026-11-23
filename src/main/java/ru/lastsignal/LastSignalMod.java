@@ -44,6 +44,7 @@ public final class LastSignalMod implements ModInitializer {
             Identifier.of(ID, "keycard"), new Item(new Item.Settings().maxCount(1)));
 
     @Override public void onInitialize() {
+        LastSignalContent.initialize();
         CommandRegistrationCallback.EVENT.register((d, r, e) -> commands(d));
         UseEntityCallback.EVENT.register(this::entityUse);
         UseBlockCallback.EVENT.register(this::blockUse);
@@ -95,7 +96,7 @@ public final class LastSignalMod implements ModInitializer {
             w.setBlockState(o.add(x,4,-4), Blocks.SEA_LANTERN.getDefaultState());
             w.setBlockState(o.add(x,4,4), Blocks.SEA_LANTERN.getDefaultState());
         }
-        w.setBlockState(o.add(9,1,0), Blocks.LODESTONE.getDefaultState());
+        w.setBlockState(o.add(9,1,0), LastSignalContent.TERMINAL.getDefaultState());
         w.setBlockState(o.add(20,1,0), Blocks.LODESTONE.getDefaultState());
         w.setBlockState(o.add(27,1,0), Blocks.LODESTONE.getDefaultState());
         for (int x : new int[]{14,17,23}) {

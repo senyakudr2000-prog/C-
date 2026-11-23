@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "lastsignal:block/terminal" }
+  }
+}
