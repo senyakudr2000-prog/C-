@@ -5,11 +5,15 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
+import net.minecraft.client.render.entity.model.ModelWithArms;
+import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Arm;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 public final class LastSignalClient implements ClientModInitializer {
  @Override public void onInitializeClient(){EntityRendererRegistry.register(LastSignalContent.ORLOV,OrlovRenderer::new);EntityRendererRegistry.register(LastSignalContent.GUARD,GuardRenderer::new);}
- private static final class HumanoidModel<T extends LivingEntity> extends SinglePartEntityModel<T>{
+ private static final class HumanoidModel<T extends LivingEntity> extends SinglePartEntityModel<T> implements ModelWithArms{
   private final ModelPart root,head,body,leftArm,rightArm,leftLeg,rightLeg;
   HumanoidModel(ModelPart r){root=r;head=r.getChild("head");body=r.getChild("body");leftArm=r.getChild("left_arm");rightArm=r.getChild("right_arm");leftLeg=r.getChild("left_leg");rightLeg=r.getChild("right_leg");}
   static TexturedModelData data(boolean guard){
@@ -22,7 +26,8 @@ public final class LastSignalClient implements ClientModInitializer {
    r.addChild("left_arm",ModelPartBuilder.create().uv(32,16).cuboid(-1,-2,-2,4,12,4),ModelTransform.pivot(5,2,0));r.addChild("right_arm",ModelPartBuilder.create().uv(32,16).mirrored().cuboid(-3,-2,-2,4,12,4),ModelTransform.pivot(-5,2,0));r.addChild("left_leg",ModelPartBuilder.create().uv(16,32).cuboid(-2,0,-2,4,12,4),ModelTransform.pivot(2,12,0));r.addChild("right_leg",ModelPartBuilder.create().uv(16,32).mirrored().cuboid(-2,0,-2,4,12,4),ModelTransform.pivot(-2,12,0));return TexturedModelData.of(d,64,64);
   }
   @Override public ModelPart getPart(){return root;}
-  @Override public void setAngles(T e,float a,float d,float tick,float yaw,float pitch){head.yaw=yaw*((float)Math.PI/180F);head.pitch=pitch*((float)Math.PI/180F);rightArm.pitch=(float)Math.cos(a*.6662F+Math.PI)*d;leftArm.pitch=(float)Math.cos(a*.6662F)*d;rightLeg.pitch=(float)Math.cos(a*.6662F)*1.4F*d;leftLeg.pitch=(float)Math.cos(a*.6662F+Math.PI)*1.4F*d;body.yaw=0;}
+  @Override public void setArmAngle(Arm arm,MatrixStack matrices){ModelPart part=arm==Arm.LEFT?leftArm:rightArm;part.rotate(matrices);matrices.translate(0.0F,0.0625F,0.0F);}
+  @Override public void setAngles(T e,float a,float d,float tick,float yaw,float pitch){head.yaw=yaw*((float)Math.PI/180F);head.pitch=pitch*((float)Math.PI/180F);rightArm.pitch=(float)Math.cos(a*.6662F+Math.PI)*d;leftArm.pitch=(float)Math.cos(a*.6662F)*d;rightLeg.pitch=(float)Math.cos(a*.6662F)*1.4F*d;leftLeg.pitch=(float)Math.cos(a*.6662F+Math.PI)*1.4F*d;body.yaw=0;if(e instanceof GuardEntity){rightArm.pitch=-1.15f;leftArm.pitch=-1.15f;rightArm.yaw=-.12f;leftArm.yaw=.12f;}}
  }
  private static final class OrlovRenderer extends MobEntityRenderer<OrlovEntity,HumanoidModel<OrlovEntity>>{
   private static final Identifier TEX=Identifier.of("lastsignal","textures/entity/orlov.png");
@@ -31,7 +36,7 @@ public final class LastSignalClient implements ClientModInitializer {
  }
  private static final class GuardRenderer extends MobEntityRenderer<GuardEntity,HumanoidModel<GuardEntity>>{
   private static final Identifier TEX=Identifier.of("lastsignal","textures/entity/guard.png");
-  GuardRenderer(EntityRendererFactory.Context c){super(c,new HumanoidModel<>(HumanoidModel.data(true).createModel()),.5f);}
+  GuardRenderer(EntityRendererFactory.Context c){super(c,new HumanoidModel<>(HumanoidModel.data(true).createModel()),.5f);this.addFeature(new HeldItemFeatureRenderer<>(this,c.getHeldItemRenderer()));}
   @Override public Identifier getTexture(GuardEntity e){return TEX;}
  }
 }
