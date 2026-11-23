@@ -10,7 +10,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.PillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.Item;
@@ -69,7 +68,7 @@ public final class LastSignalMod implements ModInitializer {
         setStage(p, 1);
         ServerWorld w = (ServerWorld)p.getWorld();
         build(w, o);
-        VillagerEntity v = EntityType.VILLAGER.create(w, SpawnReason.EVENT);
+        VillagerEntity v = EntityType.VILLAGER.create(w);
         if (v != null) {
             v.refreshPositionAndAngles(o.getX()+3.5, o.getY()+1, o.getZ()+.5, 90, 0);
             v.setCustomName(Text.literal("§bДоктор Орлов"));
@@ -157,7 +156,7 @@ public final class LastSignalMod implements ModInitializer {
         ServerWorld w=(ServerWorld)p.getWorld(); BlockPos o=origin(p);
         int[][] xy={{15,-3},{17,0},{15,3},{23,0}};
         for(int i=0;i<xy.length;i++) {
-            PillagerEntity mob=EntityType.PILLAGER.create(w,SpawnReason.EVENT);
+            PillagerEntity mob=EntityType.PILLAGER.create(w);
             if(mob==null) continue;
             mob.refreshPositionAndAngles(o.getX()+xy[i][0]+.5,o.getY()+1,o.getZ()+xy[i][1]+.5,180,0);
             mob.addCommandTag(ENEMY);
@@ -169,7 +168,7 @@ public final class LastSignalMod implements ModInitializer {
 
     private void tick(MinecraftServer server) {
         for(ServerPlayerEntity p:server.getPlayerManager().getPlayerList()) if(stage(p)==3) {
-            BlockPos o=origin(p); Box area=new Box(o.add(12,0,-5),o.add(25,6,5));
+            BlockPos o=origin(p); Box area=new Box(o.getX()+12, o.getY(), o.getZ()-5, o.getX()+25, o.getY()+6, o.getZ()+5);
             long left=p.getWorld().getEntitiesByClass(PillagerEntity.class,area,e->e.getCommandTags().contains(ENEMY)).size();
             if(left==0) {
                 setStage(p,4);
@@ -214,7 +213,7 @@ public final class LastSignalMod implements ModInitializer {
 
     private void reset(ServerPlayerEntity p) {
         ServerWorld w=(ServerWorld)p.getWorld(); BlockPos o=origin(p);
-        Box area=new Box(o.add(-5,-2,-7),o.add(32,8,7));
+        Box area=new Box(o.getX()-5, o.getY()-2, o.getZ()-7, o.getX()+32, o.getY()+8, o.getZ()+7);
         for(Entity e:w.getOtherEntities(p,area,x->x.getCommandTags().contains(ORLOV)||x.getCommandTags().contains(ENEMY))) e.discard();
         clear(p); say(p,"§7Прогресс сброшен. Запусти /lastsignal start.");
     }
